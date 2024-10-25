@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: demo
+
+#  config:
+#    import:
+#      - "tenants/tenants.yaml"
+
+  docker:
+    compose:
+      enabled: false
+
+default-tenant: tenant1
+
+multitenancy:
+  tenants:
+    - name: tenant1
+      datasource:
+        url: jdbc:mysql://localhost:3306/tenant1
+        username: tenant1
+        password: tenant1
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    - name: tenant2
+      datasource:
+        url: jdbc:mysql://localhost:3306/tenant2
+        username: tenant2
+        password: tenant2
+        driver-class-name: com.mysql.cj.jdbc.Driver
