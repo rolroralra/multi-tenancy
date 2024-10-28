@@ -8,21 +8,68 @@ spring:
 
   docker:
     compose:
-      enabled: false
+      enabled: true
 
-default-tenant: tenant1
+  datasource-master:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306
+    username: root
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+#        dialect: org.hibernate.dialect.MySQL8Dialect
+  #    open-in-view: false
+
+  sql:
+    init:
+      platform: mysql
+      schema-locations:
+      - "classpath:sql/mysql/schema.sql"
+      data-locations:
+      - "classpath:sql/mysql/data.sql"
+      mode: never
+
+#      jakarta:
+#        persistence:
+#          schema-generation:
+#            scripts:
+#              action: create
+#              create-target: create.sql
+#              create-source: metadata
+
+#  flyway:
+#    enabled: true
+#    baseline-on-migrate: true
+#    baseline-version: 1
+#    url: jdbc:mysql://localhost:3306/test
+#    user: root
+#    password: root
+
+default-tenant: test
 
 multitenancy:
   tenants:
     - name: tenant1
       datasource:
-        url: jdbc:mysql://localhost:3306/tenant1
-        username: tenant1
-        password: tenant1
         driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/tenant1
+        username: root
+        password: root
     - name: tenant2
       datasource:
-        url: jdbc:mysql://localhost:3306/tenant2
-        username: tenant2
-        password: tenant2
         driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/tenant2
+        username: root
+        password: root
+    - name: test
+      datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/test
+        username: root
+        password: root

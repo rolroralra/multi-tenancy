@@ -1,11 +1,11 @@
 package com.example.demo.config;
 
-import com.example.demo.constants.MultiTenantConstants;
+import com.example.demo.constants.TenantConstants;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.HibernateException;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.springframework.stereotype.Component;
 
@@ -33,24 +33,16 @@ public class TenantConnectionProvider implements MultiTenantConnectionProvider<S
     public Connection getConnection(String tenantIdentifier) throws SQLException {
         log.debug("Get connection for tenant {}", tenantIdentifier);
         final Connection connection = getAnyConnection();
-        try {
-            if (tenantIdentifier != null) {
-                connection.createStatement().execute("USE " + tenantIdentifier);
-            } else {
-                connection.createStatement().execute("USE " + MultiTenantConstants.DEFAULT_TENANT_ID);
-            }
-        } catch (SQLException e) {
-            throw new HibernateException(
-                "Could not alter JDBC connection to specified schema [" + tenantIdentifier + "]", e
-            );
-        }
+        connection.createStatement()
+            .execute(String.format("SET SCHEMA \"%s\";", tenantIdentifier));
         return connection;
     }
 
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
         log.debug("Release connection for tenant {}", tenantIdentifier);
-        connection.setSchema(MultiTenantConstants.DEFAULT_TENANT_ID);
+        connection.createStatement()
+            .execute(String.format("SET SCHEMA \"%s\";", TenantConstants.DEFAULT_TENANT_ID));
         releaseAnyConnection(connection);
     }
 
@@ -60,13 +52,12 @@ public class TenantConnectionProvider implements MultiTenantConnectionProvider<S
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public boolean isUnwrappableAs(Class aClass) {
+    public boolean isUnwrappableAs(@NonNull Class<?> unwrapType) {
         return false;
     }
 
     @Override
-    public <T> T unwrap(Class<T> aClass) {
+    public <T> T unwrap(@NonNull Class<T> unwrapType) {
         return null;
     }
 }

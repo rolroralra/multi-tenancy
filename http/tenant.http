@@ -1,2 +1,20 @@
-## GET /api/v1/tenants
-GET {{host}}/api/v1/tenants
+### GET /api/v1/notes
+GET {{host}}/api/v1/notes?page=0&size=10
+
+### POST /api/v1/notes
+POST {{host}}/api/v1/notes?title=title1&content=content1
+Content-Type: application/json
+
+> {%
+ client.global.set("id", response.body.id);
+
+ %}
+
+### GET /api/v1/notes/{id}
+GET {{host}}/api/v1/notes/{{id}}
+
+### PUT /api/v1/notes/{id}
+PUT {{host}}/api/v1/notes/{{id}}?title=title{{id}}&content=content{{id}}
+
+### DELETE /api/v1/notes/{id}
+DELETE {{host}}/api/v1/notes/{{id}}
